@@ -1,34 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Provenance Blockchain
 
-## Getting Started
+This has been tested on Ubuntu 20.04 only.
 
-First, run the development server:
+This repository provides a sample setup for a blockchain-backed key-value database system, using MultiChain (http://www.multichain.com) as the backend blockchain. The system implements a very open version of a permissioned blockchain, in that anyone can sign up and send or retrieve transactions key/value data pairs on the blockchain, however only permissioned nodes can "mine" blocks. A native currency is used for spam prevention, in that every transaction requires one native currency unit for the transaction to be included.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+The mining difficulty is set extremely low (a standard PC can find a block in a few seconds) and does not change: this is a workaround for what appears to be a requirement in Multichain that proof of work is used when supporting native currency.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A faucet page that allows participants to obtain further native currency is included - this can be disabled.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+The system contains two main components: the master nodes and the client nodes. Both master and client nodes run a full instance of Multichain, but clients have reduced permissions. Master nodes have permission to mine, and run a web server that enables automatic sign-up of clients. Clients have permission to send and receive transactions, and can be accessed through a RESTful API provided through a client web server instance running on localhost.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-## Learn More
+## Installation
+For either master or client run:
 
-To learn more about Next.js, take a look at the following resources:
+     sudo ./install.sh
+     
+This sets up the relevant Python virtual environment and installs the required packages.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To run the master node, execute:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+    ./master-run.sh
+    
+This starts a local webserver. See http://localhost:3000/admin for the high-tech admin panel.
 
-## Deploy on Vercel
+To run the client for the first time, see the signup information at the master site, for example http://localhost:3000/ or if you're restarting the client just execute:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+     ./client-run.sh
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Master
+The master creates the original blockchain, issues native cryptocurrency on the blockchain, and automates client signup. The native cryptocurrency is used to pay for writing data hashes to the blockchain, and is used to prevent spam transactions.
+
+## Client
+The client sets up a blockchain node, makes a signup request to the master, and then launches the client API module, which allows other software components to read and write data to the blockchain. 
+
+Subsequently it just launches the client, as the blockchain node only needs configuration once. By default the local client webserver runs on port 5002.
+
+## Firewall rules
+The blockchchain instances can only connect to the network if the relevant firewall ports have been opened. The instances are set to the following defaults:
+
+master:
+ node port: 6267
+ rpc port : 6266
+
+client:
+ node port: 19255
+ rpc port : 19254
+
+The install.sh script automatically opens these ports.
