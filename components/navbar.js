@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 
 function NavLink({to, children}) {
     return <a href={to} className={`mx-4`}>
@@ -27,6 +29,10 @@ function MobileNav({open, setOpen}) {
 export default function Navbar() {
 
     const [open, setOpen] = useState(false)
+    const { data, status } = useSession()
+    console.log("Index session data: ", data);
+
+
     return (
         <nav className="flex filter drop-shadow-md bg-white px-4 py-4 h-20 items-center">
             <MobileNav open={open} setOpen={setOpen}/>
@@ -45,24 +51,37 @@ export default function Navbar() {
                 </div>
 
                 <div className="hidden md:flex">
-                    <NavLink to="/index">
-                        INDEX
+                    <NavLink to="/">
+                        HOME
                     </NavLink>
-                    <NavLink to="/admin">
-                        ADMIN
+                  { (status === "authenticated") && (
+                    <div>
+                    <NavLink to="/file">
+                        FILE
                     </NavLink>
+                    <NavLink to="/product">
+                        PRODUCT
+                    </NavLink>
+                    <NavLink to="/directory">
+                        DIRECTORY
+                    </NavLink>
+                    <span> | </span>
                     <NavLink to="/faucet">
                         FAUCET
-                    </NavLink>
-                    <NavLink to="/permissions">
-                        PERMISSIONS
-                    </NavLink>
-                    <NavLink to="/signup">
-                        SIGNUP
                     </NavLink>
                     <NavLink to="/about">
                         ABOUT
                     </NavLink>
+                    <NavLink to="/test">
+                        TEST
+                    </NavLink>
+                    <Image 
+                      src={ (data?.user?.image) ? data.user.image : "" } 
+                      className="max-w-md mx-auto"
+                      alt="Profile picture" 
+                      width="18px" height="18px"/>
+                    </div>
+                  )}
                 </div>
             </div>
         </nav>

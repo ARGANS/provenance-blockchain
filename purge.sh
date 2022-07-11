@@ -8,13 +8,12 @@
 set -x
 
 # delete logs
-rm log-master.txt
-rm log-client.txt
-rm nodestore.json
+# rm log-master.txt
+# rm log-client.txt
+# nodestore.json
 
 # crudely kill multichaind and then delete files
 pkill -9 multichaind
 rm -fr ~/.multichain-master/
-rm -fr ~/.multichain-client/
 
 

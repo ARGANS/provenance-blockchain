@@ -18,91 +18,106 @@ export class Name {
 }
 
 export class Generation {
-  constructor(id, filename, description, fileHash, hashSchema) {
-    this.id = id;
-    this.type = "Generation";
-    this.filename = filename;
-    this.description = description;
-    this.fileHash = fileHash;
-    this.hashSchema = hashSchema;
+  constructor() {
+    this["Type"] = "Generation";
+    this["Product identifier"] = "";
+    this["File identifier"] = "";
+    this["Filename"] = "";
+    this["Description"] = "";
+    this["Hash schema"] = "SHA256";
+    this["Owner"] = "Unknown";
+    this.color = "green";
   }
 }
 
 export class Processing {
-  constructor(id, filename, description, fileHash, priorFileHash, hashSchema) {
-    this.id = id;
-    this.type = "Processing";
-    this.filename = filename;
-    this.description = description;
-    this.fileHash = fileHash;
-    this.priorFileHash = priorFileHash;
-    this.hashSchema = hashSchema;
+  constructor() {
+    this["Type"] = "Processing";
+    this["Product identifier"] = "";
+    this["File identifier"] = "";
+    this["Filename"] = "";
+    this["Description"] = "";
+    this["Prior hash"] = ""
+    this["Hash schema"] = "SHA256";
+    this["Owner"] = "Unknown";
+    this.color = "yellow";
   }
 }
 
 export class Merging {
-  constructor(id, filename, descrption, filehash, priorFileHash, hashSchema, inputsList) {
-    this.id = "";
-    this.type = "Merging";
-    this.filename = "";
-    this.description = "";
-    this.fileHash = "";
-    this.priorFileHash = "";
-    this.hashSchema = "";
-    this.inputs = inputsList;
+  constructor() {
+    this["Type"] = "Merging";
+    this["Product identifier"] = "";
+    this["File identifier"] = "";
+    this["Filename"] = "";
+    this["Description"] = "";
+    this["Hash schema"] = "SHA256";
+    this["Owner"] = ""
+    this["Packaged files"] = {
+      // should be a dict of type: class entries
+    };
+    this.color = "indigo";
   }
 }
 
 export class Packaging {
-  constructor(id, filename, description, fileHash, priorFileHash, hashSchema, inputsList) {
-    this.id = id;
-    this.type = "Packaging";
-    this.filename = filename;
-    this.description = description;
-    this.fileHash = fileHash;
-    this.priorFileHash = priorFileHash;
-    this.hashSchema = hashSchema;
-    this.inputs = inputsList; // should be a list of hashes and id tuples
+  constructor() {
+    this["Type"] = "Packaging";
+    this["Product identifier"] = "";
+    this["File identifier"] = "";
+    this["Filename"] = "";
+    this["Description"] = "";
+    this["Hash schema"] = "SHA256";
+    this["Owner"] = ""
+    this["Packaged files"] = {
+      // should be a dict of type: class entries
+    };
+    this.color = "violet";
   }
 }
 
 export class Deletion {
-  constructor(id, filename, descrption, fileHash, priorFileHash, hashSchema, inputsList) {
-    this.id = id;
-    this.type = "Deletion";
-    this.filename = filename;
-    this.description = description;
-    this.fileHash = fileHash;
-    this.priorFileHash = priorFileHash;
-    this.hashSchema = hashSchema;
-      // should be a list of hashes and id tuples
-      // if, for example, files in a package are removed
-    this.inputs = inputsList;
+  constructor() {
+    this["Type"] = "Deletion";
+    this["Product identifier"] = "";
+    this["File identifier"] = "";
+    this["Filename"] = "";
+    this["Description"] = "";
+    this["Hash schema"] = "SHA256";
+    this["Owner"] = ""
+    this["Corrections"] = {
+      // should be a dict of type: class entries
+    };
+    this.color = "red";
   }
 }
 
 export class ProxyGeneration {
-  constructor(id, filename, description, fileHash, hashSchema, proposedOwner) {
-    this.id = "";
-    this.type = "ProxyGeneration";
-    this.filename = "";
-    this.description = "";
-    this.fileHash = "";
-    this.hashSchema = "";
-    this.proposedOwner = "";
+  constructor() {
+    this["Type"] = "ProxyGeneration";
+    this["Product identifier"] = "";
+    this["File identifier"] = "";
+    this["Filename"] = "";
+    this["Description"] = "";
+    this["Hash schema"] = "SHA256";
+    this["Proposed owner"] = "Unknown";
+    this.color = "lime";
   }
+  
 }
 
 export class Correction {
-  constructor(id, filename, description, fileHash, hashSchema, corrections) {
-    this.id = "";
-    this.type = "Correction";
-    this.filename = "";
-    this.description = "";
-    this.fileHash = "";
-    this.hashSchema = "";
-    this.corrections = {
+  constructor() {
+    this["Type"] = "Correction";
+    this["Product identifier"] = "";
+    this["File identifier"] = "";
+    this["Filename"] = "";
+    this["Description"] = "";
+    this["Hash schema"] = "SHA256";
+    this["Owner"] = ""
+    this["Corrections"] = {
       // should be a dict of type: class entries
     };
+    this.color = "pink";
   }
 }

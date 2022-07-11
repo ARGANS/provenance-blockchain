@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   const result =  await chainCommand([
     "publish",
     "root",
-    "details",
+    "'details'",
     '\'{"json": ' + body + '}\''
   ]);
   // console.log(result)

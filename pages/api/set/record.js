@@ -1,4 +1,7 @@
-// write a Name object to the blockchain with key: details publisher: current address
+// write a Name object to the blockchain with keys: 
+// type: whether it is generation or something else
+// id: current hash
+// prodId: hash of file for generation event
 
 const chainCommand = require('../../../utils/chainCommand.js').chainCommand;
 
@@ -12,18 +15,11 @@ export default async function handler(req, res) {
   console.log(body);
   const result =  await chainCommand([
     "publish",
-    "root"
-    [body.type, body.id],
+    "root",
+    '\'["' + req.body["Type"]+ '", "' + req.body["Product identifier"] + '", "' + req.body["File identifier"] + '"]\'',
     '\'{"json": ' + body + '}\''
   ]);
-  // console.log(result)
+  console.log(result)
 
-  /*  const details = JSON.parse(result[2]);
-  var name = "Name not set";
-  if (details !== []) {
-    console.log("Get name here when add details is available");
-  }
-  res.status(200).json(result[2] ? result[2] : name);
-  */
   res.status(200).end(result[0]);
 }

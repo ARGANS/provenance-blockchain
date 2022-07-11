@@ -1,23 +1,9 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import NameForm from '../components/nameForm.js'
-import { useEffect, useState } from 'react';
-import { server } from '../config/config.js';
-import {useSSE} from 'use-sse';
 
 
-export default function Home() {
-
-  const [myaddress, setMyaddress] = useState('');
-
-  useEffect(() => {
-    fetch(server + "/api/get/address")
-    .then(response => response.json())
-    .then(data => {
-      setMyaddress(data.address);
-    });
-  }, [])
+export default function About() {
 
   return (
     <div>
@@ -26,7 +12,7 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <div>add software license here</div>
+      <div><h1>ADD SOFTWARE LICENSE HERE</h1></div>
 
       <div>
 The copyright notices in the Software and this entire statement, including

@@ -7,7 +7,7 @@ import { server } from '../config/config.js';
 import {useSSE} from 'use-sse';
 
 
-export default function Home() {
+export default function Error() {
 
   const [myaddress, setMyaddress] = useState('');
 
@@ -26,7 +26,7 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <div><NameForm address={myaddress} readonly={false}/></div>
+      <div><Error!</div>
 
     </div>
   );

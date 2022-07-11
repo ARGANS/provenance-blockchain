@@ -7,11 +7,12 @@ import { server } from '../config/config.js';
 import {useSSE} from 'use-sse';
 
 
-export default function Home() {
+export default function Admin() {
 
   const [myaddress, setMyaddress] = useState('');
 
   useEffect(() => {
+    console.log("In Admin")
     fetch(server + "/api/get/address")
     .then(response => response.json())
     .then(data => {

@@ -1,11 +1,11 @@
 // components/nameForm.js
 import { useState, useEffect } from 'react';
-import { Name } from '../utils/dataStructures.js'
-import { server } from '../config/config.js';
+import { Name } from '../../utils/dataStructures.js'
+import { server } from '../../config/config.js';
 
 // record for user details constructor(username, organization, orgid, website, phone, email, line1, line2, city, state, postalcode, country)
 
-export default function NameForm({address, readonly}) {
+export default function NameForm({address, name, readonly}) {
 
   const [username, setUsername] = useState('');
   const [organization, setOrganization] = useState('');
@@ -19,18 +19,27 @@ export default function NameForm({address, readonly}) {
   const [state, setState] = useState('');
   const [postalcode, setPostalcode] = useState('');
   const [country, setCountry] = useState('');
+  const [balance, setBalance] = useState('');
 
   useEffect(() => {
       if (address !== "") {
-      console.log(server + "/api/get/details/" + address)
+      fetch(server + "/api/get/balance/" + address)
+      .then(response => response.text())
+      .then(data => {
+        setBalance(data)
+      })
+
       fetch(server + "/api/get/details/" + address)
       .then(response => response.json())
       .then(data => {
         // check that there is an entry for the address
         if (data.length > 0) {
           const mostRecentDetails = data[data.length - 1];
-          console.log(mostRecentDetails);
-          setUsername(mostRecentDetails.data.json.username);
+          if (mostRecentDetails.data.json.username !== "") {
+            setUsername(mostRecentDetails.data.json.username);
+          } else {
+            setUsername(name);
+          }
           setOrganization(mostRecentDetails.data.json.organization);
           setOrgid(mostRecentDetails.data.json.orgid);
           setWebsite(mostRecentDetails.data.json.website);
@@ -42,6 +51,8 @@ export default function NameForm({address, readonly}) {
           setState(mostRecentDetails.data.json.state);
           setPostalcode(mostRecentDetails.data.json.postalcode);
           setCountry(mostRecentDetails.data.json.country);
+        } else {
+          setUsername(name);
         }
       })
       }
@@ -49,8 +60,9 @@ export default function NameForm({address, readonly}) {
 
   const submitName = async (e) => {
     e.preventDefault();
-    console.log("Submit clicked")
-    const data = new Name(username, organization, orgid, website, phone, email, line1, line2, city, state, postalcode, country);
+    const data = new Name(username, organization, orgid, 
+                          website, phone, email, line1, line2, 
+                          city, state, postalcode, country);
     fetch(server + "/api/set/details", {
       method: 'POST',
       headers: {
@@ -67,7 +79,7 @@ export default function NameForm({address, readonly}) {
 
   return (
     <>
-      <div className='justify-center items-center h-screen flex'>
+      <div className='justify-center items-top h-screen flex'>
       <form onSubmit={submitName}>
 
         <div className="grid xl:grid-cols-2 xl:gap-6">
@@ -80,16 +92,29 @@ export default function NameForm({address, readonly}) {
               disabled
              />
           </div>
+
         </div>
+        <div className="grid xl:grid-cols-2 xl:gap-6">
+          <div className="col-span-2 relative z-0 mb-6 w-full group">
+            <label htmlFor="address" className='flex'>Balance</label>
+            <input
+              className='bg-gray-100 shadow-inner rounded-l rounded-r p-2 w-full'
+              id='balance' aria-label='balance' placeholder='Balance' 
+              value={balance}
+              disabled
+             />
+          </div>
+        </div>
+
         <div className="grid xl:grid-cols-2 xl:gap-6">
           <div className="relative z-0 mb-6 w-full group"> 
             <label htmlFor="username" className='flex'>Name</label>
             { !readonly && (
             <input
-              className='bg-blue-200 shadow-inner rounded-l p-2 flex-1'
+              className='bg-gray-100 shadow-inner rounded-l p-2 flex-1'
               id='username' aria-label='name' placeholder='Name' 
               value={username}
-              onChange={e => setUsername(e.target.value)}
+              disabled
              />
             )}
             { !!readonly && (
@@ -331,11 +356,12 @@ export default function NameForm({address, readonly}) {
           (
           <div>
             <label htmlFor="submit" className='flex'>&nbsp;</label>
-            <button id='submit' className='bg-blue-600 hover:bg-blue-700 duration-300 text-white shadow p-2 rounded p-2 flex-1'
+            <button id='submit'
+              className='bg-blue-600 hover:bg-blue-700 duration-300 text-white shadow p-2 rounded p-2 flex-1'
               type='submit'
               onClick={submitName}
             >
-              Write to blockchain
+              Update record
             </button>
           </div>
           )
