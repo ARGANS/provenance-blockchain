@@ -17,6 +17,7 @@
     "next-auth": "4.0.0-beta.4",
     "nextjs-navbar-active-link": "^0.1.5-rc1",
     "react": "17.0.2",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "17.0.2",
     "react-dropzone": "^14.2.1",
     "use-sse": "^2.0.1"

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 // import { Generation } from '../utils/dataStructures.js'
 import { server } from '../../config/config.js';
-import parse from 'html-react-parser';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 // record for user details constructor(username, organization, orgid, website, phone, email, line1, line2, city, state, postalcode, country)
 
@@ -12,6 +12,8 @@ export default function eventForm({event, readonly, submit}) {
   const [color, setColor] = useState(event["color"]);
   const [description, setDescription] = useState(event["Description"]);
   const [owner, setOwner] = useState("Unknown");
+
+  const [submitted, setSubmitted] = useState('')
 
   useEffect(() => {
     fetch(server + "/api/get/address")
@@ -38,11 +40,14 @@ export default function eventForm({event, readonly, submit}) {
     })
     .then(result => {
       console.log(result.body);
+      setSubmitted(event["Type"] + " event submitted to the blockchain");
     })
   }
 
   return (
     <>
+      <div>
+       { (submitted === '') && (
       <div className={ 'bg-' + color + '-100 justify-center items-top h p-2' }> 
         <form onSubmit={ submitForm }>
           <span className="bg-violet-100"/><span className="bg-blue-100"/> <span className="bg-red-100"/><span className="bg-green-100"/>
@@ -65,18 +70,46 @@ export default function eventForm({event, readonly, submit}) {
                      ((key !== 'Description') && 
                      (key !== 'Proposed owner'))) && (key !== 'Owner')) 
                      || (!submit && (key !== 'color'))) {
-                  return (
-                    <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
-                      <label htmlFor="type" className="flex">{ key }</label>
-                      <input
-                        className={ "bg-gray-200 shadow-inner rounded-l rounded-r p-2 w-full" }
-                        id={ key }
-                        aria-label={ key }
-                        value={ event[key] }
-                        readOnly={true}
-                      />
-                    </div>
-                  )
+                  if (key === 'Product identifier' || key === 'Owner') {
+                    return (
+                      <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
+                        <label htmlFor="type" className="flex">{ key }</label>
+                          <div className="relative">
+                          <div className="absolute inset-y-0 right-0 flex items-center pl-0 justify-self-end" onClick={() => {navigator.clipboard.writeText(event[key])}}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"
+                              fill="none" stroke="blue" strokeWidth="2" strokeLinecap="round" 
+                              strokeLinejoin="round" className="feather feather-copy">
+                              <rect stroke="#E5E7EB" strokeWidth="2" width="100%" height="100%" fill="#E5E7EB" />
+                              <rect x="11" y="11" width="13" height="13" rx="2" ry="2"></rect>
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1">
+                              </path>
+                            </svg>
+                          </div>
+                            <input
+                              className={ "bg-gray-200 shadow-inner rounded-l rounded-r p-2 w-full" }
+                              id={ key }
+                              aria-label={ key }
+                              value={ event[key] }
+                              onClick={() => {navigator.clipboard.writeText(event[key])}}
+                              readOnly={true}
+                            />
+                          </div>
+                      </div>
+                    )
+                  } else {
+                    return (
+                      <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
+                        <label htmlFor="type" className="flex">{ key }</label>
+                        <input
+                          className={ "bg-gray-200 shadow-inner rounded-l rounded-r p-2 w-full" }
+                          id={ key }
+                          aria-label={ key }
+                          value={ event[key] }
+                          readOnly={true}
+                        />
+                      </div>
+                    )
+                  }
                 } else if (key === 'Description') {
                    return (
                     <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
@@ -135,6 +168,15 @@ export default function eventForm({event, readonly, submit}) {
           )
         }
         </form>
+      </div>
+      )}
+      </div>
+      <div>
+      { (submitted !== '') && (
+        <div>
+          { submitted }
+        </div>
+      )}
       </div>
     </>
     )

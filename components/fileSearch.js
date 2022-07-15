@@ -1,7 +1,15 @@
 // components/fileSearch.js
 import { useState, useEffect } from 'react';
 import { server } from '../config/config.js';
-import { ProxyGeneration, Generation } from  '../utils/dataStructures';
+import { 
+  ProxyGeneration,
+  Generation,
+  Processing,
+  Merging,
+  Packaging,
+  Deletion,
+  Correction
+} from  '../utils/dataStructures';
 import EventForm from '../components/dataforms/eventForm.js';
 import ResultAccordion from '../components/resultAccordion.js';
 import { sha256 } from 'js-sha256';
@@ -18,12 +26,29 @@ export default function FileSearch({fileId, filename}) {
 
   const [newproxy, setNewproxy] = useState(new ProxyGeneration());
   const [newgenesis, setNewgenesis] = useState(new Generation());
+  const [newprocessing, setNewprocessing] = useState(new Processing());
+  const [newmerging, setNewmerging] = useState(new Merging());
+  const [newpackaging, setNewpackaging] = useState(new Packaging());
+  const [newdeletion, setNewdeletion] = useState(new Deletion());
+  const [newcorrection, setNewcorrection] = useState(new Correction());
+
   const [dataStruct, setDataStruct] = useState([]);
 
+
+  function hideAll() {
+   showGenesis(false)
+   showPrereg(false)
+   showFound(false)
+   showReg(false)
+  }
+
+  function hideForms() {
+    showPrereg(false)
+    showReg(false)
+  }
+
   const submitSearch = async (e) => {
-    showPrereg(false); 
-    showReg(false);
-    showGenesis(false);
+    hideAll();
     let result = [];
     e.preventDefault();
     console.log(fileId);
@@ -34,6 +59,7 @@ export default function FileSearch({fileId, filename}) {
         if (data.length === 0) {
           showGenesis(true);
         } else {
+          console.log("The data retrieved is", data)
           setDataStruct(data)
           showFound(true);
         }
@@ -50,7 +76,7 @@ export default function FileSearch({fileId, filename}) {
   }
 
   function preregister() {
-    showGenesis(false);
+    hideForms();
     const tempProxy = new ProxyGeneration();
     tempProxy["Product identifier"] = strSha256(fileId);
     tempProxy["File identifier"] = fileId;
@@ -61,7 +87,7 @@ export default function FileSearch({fileId, filename}) {
   }
 
   function register() {
-    showPrereg(false);
+    hideForms();
     const tempGenesis = new Generation();
     tempGenesis["Product identifier"] = strSha256(fileId);
     tempGenesis["File identifier"] = fileId;
@@ -69,6 +95,10 @@ export default function FileSearch({fileId, filename}) {
     tempGenesis["Description"] = "none";
     setNewgenesis(tempGenesis);
     showReg(true);
+  }
+
+  function modifier() {
+    return ((!reg && !prereg) && genesis)
   }
 
   return (
@@ -101,7 +131,7 @@ export default function FileSearch({fileId, filename}) {
 
         <div>
         {
-          ( genesis) && (
+          (genesis) && (
             <div className="py-4">
               <div>
                 There is no product registered against the hash of this file. You can register the file against your own
@@ -124,7 +154,7 @@ export default function FileSearch({fileId, filename}) {
         </div>
 
         <div>
-        { (!reg && !prereg) && (
+        { modifier() && (
             <div className="py-4">
               <div>
                 If this file is a modification to an existing product, you can record it against that product with one
@@ -169,6 +199,56 @@ export default function FileSearch({fileId, filename}) {
           reg && (
           <div className="py-4">
             <EventForm event={newgenesis} readonly={true} submit={true} />
+          </div>
+          )
+        }
+        </div>
+
+        <div>
+        {
+          prereg && (
+          <div className="py-4">
+            <EventForm event={newprocessing} readonly={true} submit={true} />
+          </div>
+          )
+        }
+        </div>
+
+        <div>
+        {
+          reg && (
+          <div className="py-4">
+            <EventForm event={newmerging} readonly={true} submit={true} />
+          </div>
+          )
+        }
+        </div>
+
+        <div>
+        {
+          prereg && (
+          <div className="py-4">
+            <EventForm event={newpackaging} readonly={true} submit={true} />
+          </div>
+          )
+        }
+        </div>
+
+        <div>
+        {
+          reg && (
+          <div className="py-4">
+            <EventForm event={newdeletion} readonly={true} submit={true} />
+          </div>
+          )
+        }
+        </div>
+
+        <div>
+        {
+          reg && (
+          <div className="py-4">
+            <EventForm event={newcorrection} readonly={true} submit={true} />
           </div>
           )
         }
