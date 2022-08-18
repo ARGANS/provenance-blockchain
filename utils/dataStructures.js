@@ -53,9 +53,9 @@ export class Merging {
     this["Description"] = "";
     this["Hash schema"] = "SHA256";
     this["Owner"] = ""
-    this["Packaged files"] = {
+    this["Packaged files"] = [
       // should be a dict of type: class entries
-    };
+    ];
     this.color = "indigo";
   }
 }
@@ -69,9 +69,9 @@ export class Packaging {
     this["Description"] = "";
     this["Hash schema"] = "SHA256";
     this["Owner"] = ""
-    this["Packaged files"] = {
+    this["Packaged files"] = [
       // should be a dict of type: class entries
-    };
+    ];
     this.color = "violet";
   }
 }
@@ -85,9 +85,9 @@ export class Deletion {
     this["Description"] = "";
     this["Hash schema"] = "SHA256";
     this["Owner"] = ""
-    this["Corrections"] = {
+    this["Corrections"] = [
       // should be a dict of type: class entries
-    };
+    ];
     this.color = "red";
   }
 }
@@ -115,9 +115,9 @@ export class Correction {
     this["Description"] = "";
     this["Hash schema"] = "SHA256";
     this["Owner"] = ""
-    this["Corrections"] = {
+    this["Corrections"] = [
       // should be a dict of type: class entries
-    };
+    ];
     this.color = "pink";
   }
 }

@@ -7,12 +7,14 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 // record for user details constructor(username, organization, orgid, website, phone, email, line1, line2, city, state, postalcode, country)
 
 export default function eventForm({event, readonly, submit}) {
+
   const [myaddress, setMyaddress] = useState('');
   const [myowner, setMyowner] = useState('');
   const [color, setColor] = useState(event["color"]);
   const [description, setDescription] = useState(event["Description"]);
   const [owner, setOwner] = useState("Unknown");
-
+  const [corrections, setCorrections] = useState((typeof event["Corrections"] !== 'undefined') ? event["Corrections"] : ['','','']);
+  const [packaging, setPackaging] = useState((typeof event["Packaged files"] !== 'undefined') ? event["Packaged files"] : ['','','']);
   const [submitted, setSubmitted] = useState('')
 
   useEffect(() => {
@@ -24,11 +26,30 @@ export default function eventForm({event, readonly, submit}) {
     });
   }, [])
 
+
+  const setCorrectionsFunction = async (e, idx) => {
+    console.log(e, idx)
+    const tempArray = corrections
+    console.log(corrections)
+    tempArray[idx] = e
+    setCorrections(tempArray)
+  }
+
+  const setPackagingFunction = async (e, idx) => {
+    console.log(e, idx)
+    const tempArray = packaging
+    console.log(packaging)
+    tempArray[idx] = e
+    setPackaging(tempArray)
+  }
+
   const submitForm = async (e) => {
     const data = event
     data["Description"] = description;
     if ("Proposed owner" in data) { data["Proposed owner"] = owner };
     if ("Owner" in data) { data["Owner"] = myowner };
+    if ("Corrections" in data) { data["Corrections"] = corrections}
+    if ("Packaging" in data) { data["Packaged files"] = corrections}
     // delete data.color
     e.preventDefault();
     fetch(server + "/api/set/record", {
@@ -51,16 +72,17 @@ export default function eventForm({event, readonly, submit}) {
       <div className={ 'bg-' + color + '-100 justify-center items-top h p-2' }> 
         <form onSubmit={ submitForm }>
           <span className="bg-violet-100"/><span className="bg-blue-100"/> <span className="bg-red-100"/><span className="bg-green-100"/>
-          <span className="bg-yellow-100"/><span className="bg-indigo-100"/><span className="bg-lime-100"/> <span className="bg-violet-100"/> 
+          <span className="bg-yellow-100"/><span className="bg-indigo-100"/><span className="bg-lime-100"/> <span className="bg-pink-100"/> 
 
           <span className="bg-violet-200"/><span className="bg-blue-200"/> <span className="bg-red-200"/><span className="bg-green-200"/>
-          <span className="bg-yellow-200"/><span className="bg-indigo-200"/><span className="bg-lime-200"/> <span className="bg-violet-200"/> 
+          <span className="bg-yellow-200"/><span className="bg-indigo-200"/><span className="bg-lime-200"/> <span className="bg-pink-200"/> 
 
           <span className="bg-violet-600"/><span className="bg-blue-600"/> <span className="bg-red-600"/><span className="bg-green-600"/>
-          <span className="bg-yellow-600"/><span className="bg-indigo-600"/><span className="bg-lime-600"/> <span className="bg-violet-600"/> 
+          <span className="bg-yellow-600"/><span className="bg-indigo-600"/><span className="bg-lime-600"/> <span className="bg-pink-600"/> 
 
           <span className="bg-violet-700"/><span className="bg-blue-700"/> <span className="bg-red-700"/><span className="bg-green-700"/>
-          <span className="bg-yellow-700"/><span className="bg-indigo-700"/><span className="bg-lime-700"/> <span className="bg-violet-700"/> 
+          <span className="bg-yellow-700"/><span className="bg-indigo-700"/><span className="bg-lime-700"/> <span className="bg-pink-700"/> 
+
           <div>
             {
               Object.keys(event).map((key) => { 
@@ -68,7 +90,7 @@ export default function eventForm({event, readonly, submit}) {
                 if (
                     (((key !== 'color') && 
                      ((key !== 'Description') && 
-                     (key !== 'Proposed owner'))) && (key !== 'Owner')) 
+                     (key !== 'Proposed owner'))) && (key !== 'Owner') && (key !== 'Corrections') && (key !== 'Packaged files')) 
                      || (!submit && (key !== 'color'))) {
                   if (key === 'Product identifier' || key === 'Owner') {
                     return (
@@ -96,7 +118,47 @@ export default function eventForm({event, readonly, submit}) {
                           </div>
                       </div>
                     )
-                  } else {
+                  } else if (key === 'Corrections') {
+                    return (
+                      <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
+                      <label htmlFor="type" className="flex">{ key }</label>
+                      {
+                        corrections.map((element, idx) => {
+                          return (
+                            <input
+                              className={ "bg-gray-200 shadow-inner rounded-l rounded-r p-2 w-full" }
+                              id={ key + idx.toString()}
+                              key={ key + idx.toString()}
+                              aria-label={ key }
+                              value={ event[key][idx] }
+                              readOnly={true} 
+                            />
+                          )
+                        })
+                      }
+                      </div>
+                    )
+                  } else if (key === 'Packaged files') {
+                    return (
+                      <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
+                      <label htmlFor="type" className="flex">{ key }</label>
+                      {
+                        corrections.map((element, idx) => {
+                          return (
+                            <input
+                              className={ "bg-gray-200 shadow-inner rounded-l rounded-r p-2 w-full" }
+                              id={ key + idx.toString()}
+                              key={ key + idx.toString()}
+                              aria-label={ key }
+                              value={ event[key][idx] }
+                              readOnly={true} 
+                            />
+                          )
+                        })
+                      }
+                      </div>
+                    )
+                  }else {
                     return (
                       <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
                         <label htmlFor="type" className="flex">{ key }</label>
@@ -104,7 +166,7 @@ export default function eventForm({event, readonly, submit}) {
                           className={ "bg-gray-200 shadow-inner rounded-l rounded-r p-2 w-full" }
                           id={ key }
                           aria-label={ key }
-                          value={ event[key] }
+                          value={ (typeof event[key] === 'string') ? event[key] : JSON.stringify(event[key])}
                           readOnly={true}
                         />
                       </div>
@@ -149,7 +211,47 @@ export default function eventForm({event, readonly, submit}) {
                       />
                     </div>
                   )   
-                }
+                } else if (key === 'Corrections') {
+                    return (
+                      <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
+                      <label htmlFor="type" className="flex">{ key }</label>
+                      {
+                        corrections.map((element, idx) => {
+                          return (
+                            <input
+                              className={ "bg-" + event["color"] + "-200 shadow-inner rounded-l rounded-r p-2 w-full" }
+                              id={ key + "-" + idx.toString()}
+                              key={ key + idx.toString()}
+                              aria-label={ key }
+                              value={ event[key][idx] }
+                              onChange={e => setCorrectionsFunction(e.target.value, idx)}
+                            />
+                          )
+                        })
+                      }
+                      </div>
+                    )
+                  } else if (key === 'Packaged files') {
+                    return (
+                      <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
+                      <label htmlFor="type" className="flex">{ key }</label>
+                      {
+                        corrections.map((element, idx) => {
+                          return (
+                            <input
+                              className={ "bg-" + event["color"] + "-200 shadow-inner rounded-l rounded-r p-2 w-full" }
+                              id={ key + "-" + idx.toString()}
+                              key={ key + idx.toString()}
+                              aria-label={ key }
+                              value={ event[key][idx] }
+                              onChange={e => setPackagingFunction(e.target.value, idx)}
+                            />
+                          )
+                        })
+                      }
+                      </div>
+                    )
+                  }
               })
             }
           </div>

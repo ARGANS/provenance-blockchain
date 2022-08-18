@@ -19,10 +19,16 @@ import { sha256 } from 'js-sha256';
 export default function FileSearch({fileId, filename}) {
 
   const [id, setId] = useState(fileId);
-  const [genesis, showGenesis] = useState(false);
+  const [buttons, showButtons] = useState(false);
   const [prereg, showPrereg] = useState(false);
   const [found, showFound] = useState(false);
   const [reg, showReg] = useState(false);
+
+  const [processB, showProcessB] = useState(false);
+  const [mergeB, showMergeB] = useState(false);
+  const [packageB, showPackageB] = useState(false);
+  const [deleteB, showDeleteB] = useState(false);
+  const [correctB, showCorrectB] = useState(false);
 
   const [newproxy, setNewproxy] = useState(new ProxyGeneration());
   const [newgenesis, setNewgenesis] = useState(new Generation());
@@ -36,19 +42,29 @@ export default function FileSearch({fileId, filename}) {
 
 
   function hideAll() {
-   showGenesis(false)
-   showPrereg(false)
-   showFound(false)
-   showReg(false)
+    // showButtons(false)
+    showPrereg(false)
+    showFound(false)
+    showReg(false)
+    showProcessB(false)
+    showMergeB(false)
+    showPackageB(false)
+    showDeleteB(false)
+    showCorrectB(false)
   }
 
   function hideForms() {
     showPrereg(false)
     showReg(false)
+    showProcessB(false)
+    showMergeB(false)
+    showPackageB(false)
+    showDeleteB(false)
+    showCorrectB(false)
   }
 
   const submitSearch = async (e) => {
-    hideAll();
+    hideForms();
     let result = [];
     e.preventDefault();
     console.log(fileId);
@@ -57,11 +73,12 @@ export default function FileSearch({fileId, filename}) {
       .then(data => {
         console.log(data)
         if (data.length === 0) {
-          showGenesis(true);
+          showButtons(true);
         } else {
           console.log("The data retrieved is", data)
           setDataStruct(data)
           showFound(true);
+          showButtons(true);
         }
       })
   }
@@ -76,29 +93,84 @@ export default function FileSearch({fileId, filename}) {
   }
 
   function preregister() {
-    hideForms();
-    const tempProxy = new ProxyGeneration();
-    tempProxy["Product identifier"] = strSha256(fileId);
-    tempProxy["File identifier"] = fileId;
-    tempProxy["Filename"] = filename;
-    tempProxy["Description"] = "none";
-    setNewproxy(tempProxy);
+    hideAll();
+    const tempData = new ProxyGeneration();
+    tempData["Product identifier"] = strSha256(fileId);
+    tempData["File identifier"] = fileId;
+    tempData["Filename"] = filename;
+    tempData["Description"] = "none";
+    setNewproxy(tempData);
     showPrereg(true);
   }
 
   function register() {
-    hideForms();
-    const tempGenesis = new Generation();
-    tempGenesis["Product identifier"] = strSha256(fileId);
-    tempGenesis["File identifier"] = fileId;
-    tempGenesis["Filename"] = filename;
-    tempGenesis["Description"] = "none";
-    setNewgenesis(tempGenesis);
+    hideAll();
+    const tempData = new Generation();
+    tempData["Product identifier"] = strSha256(fileId);
+    tempData["File identifier"] = fileId;
+    tempData["Filename"] = filename;
+    tempData["Description"] = "none";
+    setNewgenesis(tempData);
     showReg(true);
   }
 
+  function processF() {
+    hideAll();
+    const tempData = new Processing();
+    tempData["Product identifier"] = strSha256(fileId);
+    tempData["File identifier"] = fileId;
+    tempData["Filename"] = filename;
+    tempData["Description"] = "none";
+    setNewprocessing(tempData);
+    showProcessB(true);
+  }
+
+  function mergeF() {
+    hideAll();
+    const tempData = new Merging();
+    tempData["Product identifier"] = strSha256(fileId);
+    tempData["File identifier"] = fileId;
+    tempData["Filename"] = filename;
+    tempData["Description"] = "none";
+    setNewmerging(tempData);
+    showMergeB(true);
+  }
+
+  function packageF() {
+    hideAll();
+    const tempData = new Packaging();
+    tempData["Product identifier"] = strSha256(fileId);
+    tempData["File identifier"] = fileId;
+    tempData["Filename"] = filename;
+    tempData["Description"] = "none";
+    setNewpackaging(tempData);
+    showPackageB(true);
+  }
+
+  function deleteF() {
+    hideAll();
+    const tempData = new Deletion();
+    tempData["Product identifier"] = strSha256(fileId);
+    tempData["File identifier"] = fileId;
+    tempData["Filename"] = filename;
+    tempData["Description"] = "none";
+    setNewdeletion(tempData);
+    showDeleteB(true);
+  }
+
+  function correctF() {
+    hideAll();
+    const tempData = new Correction();
+    tempData["Product identifier"] = strSha256(fileId);
+    tempData["File identifier"] = fileId;
+    tempData["Filename"] = filename;
+    tempData["Description"] = "none";
+    setNewcorrection(tempData);
+    showCorrectB(true);
+  }
+
   function modifier() {
-    return ((!reg && !prereg) && genesis)
+    return ((!reg && !prereg) && buttons)
   }
 
   return (
@@ -131,7 +203,7 @@ export default function FileSearch({fileId, filename}) {
 
         <div>
         {
-          (genesis) && (
+          (buttons) && (
             <div className="py-4">
               <div>
                 There is no product registered against the hash of this file. You can register the file against your own
@@ -161,26 +233,36 @@ export default function FileSearch({fileId, filename}) {
                 of the following events:
               </div>
               <div className="py-4">
-                <button className="bg-yellow-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={e => register()}>
+                <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onClick={e => processF()}>
                   &nbsp;&nbsp;Processing event&nbsp;
                 </button>&nbsp;&nbsp;
-                <button className="bg-indigo-500 hover:bg-lime-700 text-white font-bold py-2 px-4 rounded" onClick={e => preregister()}>
+                <button className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded" onClick={e => mergeF()}>
                   &nbsp;&nbsp;Merging event&nbsp;&nbsp;&nbsp;
                 </button>&nbsp;&nbsp;
-                <button className="bg-violet-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={e => register()}>
+                <button className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded" onClick={e => packageF()}>
                   &nbsp;&nbsp;Packaging event&nbsp;&nbsp;
                 </button>
               </div>
               <div className="py-4">
-                <button className="bg-red-500 hover:bg-lime-700 text-white font-bold py-2 px-4 rounded" onClick={e => preregister()}>
+                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={e => deleteF()}>
                   &nbsp;&nbsp;&nbsp;&nbsp;Deletion event&nbsp;&nbsp;&nbsp;
                 </button>&nbsp;&nbsp;
-                <button className="bg-pink-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={e => register()}>
+                <button className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded" onClick={e => correctF()}>
                   Correction event
                 </button>
               </div>
            </div>
            )
+        }
+        </div>
+
+        <div>
+        {
+          found && (
+            <div className="py-4">
+              <ResultAccordion resultStruct={ dataStruct } />
+            </div>
+          )
         }
         </div>
 
@@ -206,7 +288,7 @@ export default function FileSearch({fileId, filename}) {
 
         <div>
         {
-          prereg && (
+          processB && (
           <div className="py-4">
             <EventForm event={newprocessing} readonly={true} submit={true} />
           </div>
@@ -216,7 +298,7 @@ export default function FileSearch({fileId, filename}) {
 
         <div>
         {
-          reg && (
+          mergeB && (
           <div className="py-4">
             <EventForm event={newmerging} readonly={true} submit={true} />
           </div>
@@ -226,7 +308,7 @@ export default function FileSearch({fileId, filename}) {
 
         <div>
         {
-          prereg && (
+          packageB && (
           <div className="py-4">
             <EventForm event={newpackaging} readonly={true} submit={true} />
           </div>
@@ -236,7 +318,7 @@ export default function FileSearch({fileId, filename}) {
 
         <div>
         {
-          reg && (
+          deleteB && (
           <div className="py-4">
             <EventForm event={newdeletion} readonly={true} submit={true} />
           </div>
@@ -246,20 +328,10 @@ export default function FileSearch({fileId, filename}) {
 
         <div>
         {
-          reg && (
+          correctB && (
           <div className="py-4">
             <EventForm event={newcorrection} readonly={true} submit={true} />
           </div>
-          )
-        }
-        </div>
-
-        <div>
-        {
-          found && (
-            <div className="py-4">
-              <ResultAccordion resultStruct={ dataStruct } />
-            </div>
           )
         }
         </div>
