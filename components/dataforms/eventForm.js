@@ -13,6 +13,7 @@ export default function eventForm({event, readonly, submit}) {
   const [color, setColor] = useState(event["color"]);
   const [description, setDescription] = useState(event["Description"]);
   const [owner, setOwner] = useState("Unknown");
+  const [productId, setProductId] = useState(event["Product identifier"]);
   const [corrections, setCorrections] = useState((typeof event["Corrections"] !== 'undefined') ? event["Corrections"] : ['','','']);
   const [packaging, setPackaging] = useState((typeof event["Packaged files"] !== 'undefined') ? event["Packaged files"] : ['','','']);
   const [submitted, setSubmitted] = useState('')
@@ -48,8 +49,9 @@ export default function eventForm({event, readonly, submit}) {
     data["Description"] = description;
     if ("Proposed owner" in data) { data["Proposed owner"] = owner };
     if ("Owner" in data) { data["Owner"] = myowner };
-    if ("Corrections" in data) { data["Corrections"] = corrections}
-    if ("Packaging" in data) { data["Packaged files"] = corrections}
+    if ("Corrections" in data) { data["Corrections"] = corrections};
+    if ("Packaging" in data) { data["Packaged files"] = corrections};
+    data["Product identifier"] = productId;
     // delete data.color
     e.preventDefault();
     fetch(server + "/api/set/record", {
@@ -92,32 +94,49 @@ export default function eventForm({event, readonly, submit}) {
                      ((key !== 'Description') && 
                      (key !== 'Proposed owner'))) && (key !== 'Owner') && (key !== 'Corrections') && (key !== 'Packaged files')) 
                      || (!submit && (key !== 'color'))) {
-                  if (key === 'Product identifier' || key === 'Owner') {
-                    return (
-                      <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
-                        <label htmlFor="type" className="flex">{ key }</label>
-                          <div className="relative">
-                          <div className="absolute inset-y-0 right-0 flex items-center pl-0 justify-self-end" onClick={() => {navigator.clipboard.writeText(event[key])}}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"
-                              fill="none" stroke="blue" strokeWidth="2" strokeLinecap="round" 
-                              strokeLinejoin="round" className="feather feather-copy">
-                              <rect stroke="#E5E7EB" strokeWidth="2" width="100%" height="100%" fill="#E5E7EB" />
-                              <rect x="11" y="11" width="13" height="13" rx="2" ry="2"></rect>
-                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1">
-                              </path>
-                            </svg>
-                          </div>
-                            <input
-                              className={ "bg-gray-200 shadow-inner rounded-l rounded-r p-2 w-full" }
-                              id={ key }
-                              aria-label={ key }
-                              value={ event[key] }
-                              onClick={() => {navigator.clipboard.writeText(event[key])}}
-                              readOnly={true}
-                            />
-                          </div>
-                      </div>
-                    )
+                  if (key === 'Product identifier') {
+                    if (event['Product identifier'] !== '') {
+                      return (
+                        <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
+                          <label htmlFor="type" className="flex">{ key }</label>
+                            <div className="relative">
+                            <div className="absolute inset-y-0 right-0 flex items-center pl-0 justify-self-end" onClick={() => {navigator.clipboard.writeText(event[key])}}>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"
+                                fill="none" stroke="blue" strokeWidth="2" strokeLinecap="round" 
+                                strokeLinejoin="round" className="feather feather-copy">
+                                <rect stroke="#E5E7EB" strokeWidth="2" width="100%" height="100%" fill="#E5E7EB" />
+                                <rect x="11" y="11" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1">
+                                </path>
+                              </svg>
+                            </div>
+                              <input
+                                className={ "bg-gray-200 shadow-inner rounded-l rounded-r p-2 w-full" }
+                                id={ key }
+                                aria-label={ key }
+                                value={ event[key] }
+                                onClick={() => {navigator.clipboard.writeText(event[key])}}
+                                readOnly={true}
+                              />
+                            </div>
+                        </div>
+                      ) 
+                    } else {
+                      return (
+                        <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
+                          <label htmlFor="type" className="flex">{ key }</label>
+                            <div className="relative">
+                              <input
+                                className={ "bg-" + event["color"]+ "-200 shadow-inner rounded-l rounded-r p-2 w-full" }
+                                id={ key }
+                                aria-label={ key }
+                                value={ productId }
+                                onChange={e => setProductId(e.target.value)} 
+                              />
+                            </div>
+                        </div>
+                      )
+                    }
                   } else if (key === 'Corrections') {
                     return (
                       <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
@@ -158,7 +177,7 @@ export default function eventForm({event, readonly, submit}) {
                       }
                       </div>
                     )
-                  }else {
+                  } else {
                     return (
                       <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
                         <label htmlFor="type" className="flex">{ key }</label>
@@ -172,6 +191,7 @@ export default function eventForm({event, readonly, submit}) {
                       </div>
                     )
                   }
+                // these if statements are for editing
                 } else if (key === 'Description') {
                    return (
                     <div className="col-span-1 relative z-0 mb-6 w-full group" key={ "Form-"+ key }>
@@ -260,9 +280,10 @@ export default function eventForm({event, readonly, submit}) {
             <div>
               <label htmlFor="submit" className='flex'>&nbsp;</label>
               <button id='submit'
-                className={ 'bg-' + event["color"] + '-600 hover:bg-' + event["color"] + '-700 duration-300 text-white shadow p-2 rounded p-2 flex-1'}
+                className={ 'bg-' + ((productId.length !== 64) ? "gray" : event["color"]) + '-600 hover:bg-' + ((productId.length !== 64) ? "gray" : event["color"]) + '-700 duration-300 text-white shadow p-2 rounded p-2 flex-1'}
                 type='submit'
                 onClick={submitForm}
+                disabled={ (productId.length !== 64) }
               >
                 Submit record
               </button>

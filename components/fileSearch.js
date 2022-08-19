@@ -64,6 +64,7 @@ export default function FileSearch({fileId, filename}) {
   }
 
   const submitSearch = async (e) => {
+    showFound(false)
     hideForms();
     let result = [];
     e.preventDefault();
@@ -117,7 +118,7 @@ export default function FileSearch({fileId, filename}) {
   function processF() {
     hideAll();
     const tempData = new Processing();
-    tempData["Product identifier"] = strSha256(fileId);
+    tempData["Product identifier"] = "";
     tempData["File identifier"] = fileId;
     tempData["Filename"] = filename;
     tempData["Description"] = "none";
@@ -128,7 +129,7 @@ export default function FileSearch({fileId, filename}) {
   function mergeF() {
     hideAll();
     const tempData = new Merging();
-    tempData["Product identifier"] = strSha256(fileId);
+    tempData["Product identifier"] = "";
     tempData["File identifier"] = fileId;
     tempData["Filename"] = filename;
     tempData["Description"] = "none";
@@ -139,7 +140,7 @@ export default function FileSearch({fileId, filename}) {
   function packageF() {
     hideAll();
     const tempData = new Packaging();
-    tempData["Product identifier"] = strSha256(fileId);
+    tempData["Product identifier"] = "";
     tempData["File identifier"] = fileId;
     tempData["Filename"] = filename;
     tempData["Description"] = "none";
@@ -150,7 +151,7 @@ export default function FileSearch({fileId, filename}) {
   function deleteF() {
     hideAll();
     const tempData = new Deletion();
-    tempData["Product identifier"] = strSha256(fileId);
+    tempData["Product identifier"] = "";
     tempData["File identifier"] = fileId;
     tempData["Filename"] = filename;
     tempData["Description"] = "none";
@@ -161,7 +162,7 @@ export default function FileSearch({fileId, filename}) {
   function correctF() {
     hideAll();
     const tempData = new Correction();
-    tempData["Product identifier"] = strSha256(fileId);
+    tempData["Product identifier"] = "";
     tempData["File identifier"] = fileId;
     tempData["Filename"] = filename;
     tempData["Description"] = "none";
@@ -203,7 +204,7 @@ export default function FileSearch({fileId, filename}) {
 
         <div>
         {
-          (buttons) && (
+          (buttons && !found) && (
             <div className="py-4">
               <div>
                 There is no product registered against the hash of this file. You can register the file against your own
