@@ -14,7 +14,7 @@ cd $1
 mkdir data-10M
 mkdir data-1G
 mkdir data-100G
-mkdir data-500G
+mkdir data-250G
 
 cd data-10M
 echo "Generating 10MB file at $(pwd)"
@@ -28,17 +28,17 @@ cd ../data-100G
 echo "Generating 100GB file at $(pwd)"
 dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-001.zip bs=10G count=10 iflag=fullblock
 
-cd ../data-500G
-echo "Generating 5x 100GB files at $(pwd)"
+cd ../data-250G
+echo "Generating 5x 50GB files at $(pwd)"
 echo "File 1 ..."
-dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-001.zip bs=10G count=10 iflag=fullblock
+dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-001.zip bs=10G count=5 iflag=fullblock
 echo "File 1 ..."
-dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-002.zip bs=10G count=10 iflag=fullblock
+dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-002.zip bs=10G count=5 iflag=fullblock
 echo "File 1 ..."
-dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-003.zip bs=10G count=10 iflag=fullblock
+dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-003.zip bs=10G count=5 iflag=fullblock
 echo "File 1 ..."
-dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-004.zip bs=10G count=10 iflag=fullblock
+dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-004.zip bs=10G count=5 iflag=fullblock
 echo "File 1 ..."
-dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-005.zip bs=10G count=10 iflag=fullblock
+dd if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) of=file-005.zip bs=10G count=5 iflag=fullblock
 
 echo "Data structure generated at $1"

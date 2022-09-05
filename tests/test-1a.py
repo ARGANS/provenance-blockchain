@@ -5,6 +5,7 @@ import os
 import pathlib
 import hashlib
 import subprocess
+import random
 
 def shellRun(args):
     # use subprocess.run for security (we do not want to be passing
@@ -32,11 +33,7 @@ def getMyAddress(chain):
         sys.exit("My node has no address!")
     return address
 
-def writeStr(chain, key, output):
-    # Writes a JSON text object string to the root stream with a given key
-    mydata = '{"text": "' + output + '"}'
-    obj = shellRun(chain + ["publish", "root", key, mydata])
-    return obj.stdout
+
 
 data_start = sys.argv[1]
 if data_start == "":
@@ -45,10 +42,40 @@ if data_start == "":
 chain = ["-datadir=~/.multichain-master",
          "-port=6267", "-rpcport=6266",
          "esa-blockchain"]
+
+events = [
+    "Generation",
+    "ProxyGeneration",
+    "Processing",
+    "Merging",
+    "Packaging",
+    "Deletion",
+    "Correction"
+]
+
+eventMatch = {
+    "Generation": "green",
+    "ProxyGeneration": "lime",
+    "Processing": "yellow",
+    "Merging": "indigo",
+    "Packaging": "violet",
+    "Deletion": "red",
+    "Correction": "pink"
+}
+
 clientAddress = getMyAddress(chain)
 print('**********************************************************')
 print(clientAddress)
 print('**********************************************************')
+
+def writeStr(chain, productHash, fileHash, filename):
+    # Writes a JSON text object string to the root stream with a given key
+    randnum = random.randint(0, len(events) - 1)
+    key = '["' + events[randnum] + '", "' + productHash + '", "' + fileHash + '"]' 
+    mydata = '{"json": {"Type":"' + events[randnum] + '", "Product identifier":"' + productHash + '", "File identifier":"' + fileHash + '", "Filename": "' + filename + '", "Description": "none", "Hash schema": "SHA256", "Owner": "' + clientAddress + '", "color": "' + eventMatch.get(events[randnum]) + '"}}'
+    obj = shellRun(chain + ["publish", "root", key, mydata])
+    return obj.stdout
+
 
 def py_files(base):  
     for path, dirs, files in os.walk(base): 
@@ -58,24 +85,25 @@ def py_files(base):
 count = 0
 size = 0
 print("About to start")
-for path, file in py_files(data_start):
+for path, myfile in py_files(data_start):
     count = count + 1
-    print(str(count) + ": " + path + "/" + file)
-    tmp_size = os.path.getsize(path + "/" + file)
+    print(str(count) + ": " + path + "/" + myfile)
+    tmp_size = os.path.getsize(path + "/" + myfile)
     print("Size: " + str(tmp_size))
     size = size + tmp_size
 
     # generate file hash
     file_hash = hashlib.sha256()
-    with open(path + "/" + file, "rb") as f:
+    with open(path + "/" + myfile, "rb") as f:
         fb = f.read(65536)
         while len(fb) > 0:
             file_hash.update(fb)
             fb = f.read(65536)
-    hash = file_hash.hexdigest()
+    myhash = file_hash.hexdigest()
+    myprod = hashlib.sha256(myhash.encode('utf-8')).hexdigest()
 
-    # resp = writeStr(chain, file, hash)
-    print(hash)
+    # resp = writeStr(chain, myprod, myhash, myfile)
+    print(myfile + ": " + myhash)
 
 print()
 print("Files processed: " + str(count))
